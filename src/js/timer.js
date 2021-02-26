@@ -4,20 +4,23 @@ class CountdownTimer {
   constructor({ selector, targetDate }) {
     this.selector = selector;
     this.targetDate = targetDate;
-    this.currentDate = new Date();
-    this.createMarkup(this.selector);
-    this.timer(this.targetDate);
+    this.time = this.targetDate - new Date();
+    this.createMarkup(this.selector, this.time);
+    this.timer(this.targetDate, this.time);
   }
-  createMarkup(selector) {
-    const arrSelector = {
-      selectorId: selector,
-    };
+  createMarkup(selector, time) {
     const bodyRef = document.querySelector('body');
-    bodyRef.insertAdjacentHTML('beforeend', timerMarkup(arrSelector));
+    const startTime = this.timeHandler(time);
+    bodyRef.insertAdjacentHTML(
+      'beforeend',
+      timerMarkup({ selector, ...startTime }),
+    );
   }
-  timer(date) {
-    let time = date - this.currentDate;
-    if (time <= 0) return alert('THE TIMER HAS EXPIRED');
+  timer(date, time) {
+    if (time <= 0) {
+      alert('THE TIMER HAS EXPIRED');
+      return;
+    }
     const refs = {
       daysRef: document.querySelector(
         `div[id="${this.selector}"] span[data-value="days"]`,
@@ -34,15 +37,18 @@ class CountdownTimer {
     };
 
     setInterval(() => {
+      time = time - 1000;
       const diffTime = this.timeHandler(time);
       refs.daysRef.textContent = diffTime.days;
       refs.hoursRef.textContent = diffTime.hours;
       refs.minsRef.textContent = diffTime.mins;
       refs.secsRef.textContent = diffTime.secs;
-      time = time - 1000;
     }, 1000);
   }
   timeHandler(time) {
+    if (time <= 0) {
+      return { days: 'XX', hours: 'XX', mins: 'XX', secs: 'XX' };
+    }
     const days = Math.floor(time / (1000 * 60 * 60 * 24));
     const hours = this.pad(
       Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
