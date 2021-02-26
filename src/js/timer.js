@@ -17,7 +17,7 @@ class CountdownTimer {
   }
   timer(date) {
     let time = date - this.currentDate;
-    if (time === 0) return alert('THE TIMER HAS EXPIRED');
+    if (time <= 0) return alert('THE TIMER HAS EXPIRED');
     const refs = {
       daysRef: document.querySelector(
         `div[id="${this.selector}"] span[data-value="days"]`,
